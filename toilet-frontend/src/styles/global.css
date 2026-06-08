@@ -1,0 +1,171 @@
+/* ============================================
+   公厕管理系统 - 全局动态样式
+   ============================================ */
+
+/* ---------- CSS 变量 ---------- */
+:root {
+  --primary: #1890FF;
+  --primary-light: #40A9FF;
+  --primary-dark: #096DD9;
+  --success: #52C41A;
+  --warning: #FAAD14;
+  --danger: #FF4D4F;
+  --bg-dark: #0F2027;
+  --bg-mid: #1A2A3A;
+  --glass-bg: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.08);
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+/* ---------- 全局背景 ---------- */
+body {
+  background: #f0f2f5;
+  color: #333;
+}
+
+/* ---------- 毛玻璃卡片 ---------- */
+.glass-card {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-card:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  border-color: rgba(24,144,255,0.3);
+  transform: translateY(-2px);
+}
+
+/* ---------- 浮动动画 ---------- */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ---------- 脉冲光晕 ---------- */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(24,144,255,0.1); }
+  50% { box-shadow: 0 0 40px rgba(24,144,255,0.25); }
+}
+
+/* ---------- 呼吸灯 ---------- */
+@keyframes breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ---------- 穿梭入场 ---------- */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---------- 格子背景滚动 ---------- */
+@keyframes gridScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+/* ---------- 渐变移动 ---------- */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------- 数字跳动 ---------- */
+@keyframes numberPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- 旋转光晕 ---------- */
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ---------- 暗色主题覆盖（管理后台） ---------- */
+.admin-theme {
+  background: linear-gradient(135deg, #0c1929 0%, #0f2438 40%, #152238 100%);
+  color: #e0e6ed;
+}
+
+/* ---------- 自定义滚动条 ---------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+
+/* ---------- Element Plus 暗色覆盖 ---------- */
+.admin-theme .el-table {
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: rgba(24,144,255,0.06);
+  --el-table-row-hover-bg-color: rgba(24,144,255,0.08);
+  --el-table-border-color: rgba(255,255,255,0.06);
+  --el-table-text-color: #e0e6ed;
+  --el-table-header-text-color: #a0b4cc;
+}
+
+.admin-theme .el-button--primary {
+  background: linear-gradient(135deg, #1890FF, #40A9FF);
+  border: none;
+  box-shadow: 0 2px 8px rgba(24,144,255,0.3);
+  transition: all 0.3s;
+}
+.admin-theme .el-button--primary:hover {
+  box-shadow: 0 6px 20px rgba(24,144,255,0.45);
+  transform: translateY(-1px);
+}
+
+.admin-theme .el-dialog {
+  background: rgba(10,20,35,0.96) !important;
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+}
+
+.admin-theme .el-menu {
+  border-right: none !important;
+  background: transparent !important;
+}
+.admin-theme .el-menu-item {
+  margin: 2px 8px;
+  border-radius: 8px;
+  transition: all 0.25s;
+}
+.admin-theme .el-menu-item:hover {
+  background: rgba(255,255,255,0.08) !important;
+}
+.admin-theme .el-menu-item.is-active {
+  background: linear-gradient(135deg, rgba(24,144,255,0.25), rgba(24,144,255,0.08)) !important;
+}
+
+.admin-theme .el-input__wrapper {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: none !important;
+}
+.admin-theme .el-input__wrapper:hover {
+  border-color: rgba(24,144,255,0.4) !important;
+}
+
+.admin-theme .el-pagination button,
+.admin-theme .el-pager li {
+  background: rgba(255,255,255,0.05) !important;
+  color: #ccc !important;
+}
+.admin-theme .el-pager li.is-active {
+  background: var(--primary) !important;
+}

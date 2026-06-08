@@ -1,0 +1,51 @@
+# ========== 后端 ==========
+toilet-server/target/
+toilet-server/node_modules/
+toilet-server/*.log
+toilet-server/*.pid
+toilet-server/lib/*.jar
+!toilet-server/lib/.gitkeep
+toilet-server/package.json
+toilet-server/package-lock.json
+toilet-server/GenHash.java
+
+# ========== 前端 ==========
+toilet-frontend/node_modules/
+toilet-frontend/dist/
+toilet-frontend/*.log
+toilet-frontend/.vite/
+
+# ========== 一次性 SQL 脚本（不提交） ==========
+toilet-server/src/main/resources/sql/fix_*.sql
+toilet-server/src/main/resources/sql/init_dm_backup.sql
+toilet-server/src/main/resources/sql/update_password.sql
+toilet-server/src/main/resources/sql/clear_data.sql
+
+# ========== IDE ==========
+.idea/
+.vscode/
+*.iml
+
+# ========== Claude ==========
+.claude/
+
+# ========== 系统文件 ==========
+.DS_Store
+Thumbs.db
+
+# ========== 临时文件 ==========
+*.tmp
+*.log
+*.pid
+backend.log
+frontend.log
+*.class
+
+# ========== Maven ==========
+.mvn/wrapper/maven-wrapper.jar
+
+# ========== Docker ==========
+*.dockerignore
+
+# ========== 环境配置模板 ==========
+**/application.yml.example
