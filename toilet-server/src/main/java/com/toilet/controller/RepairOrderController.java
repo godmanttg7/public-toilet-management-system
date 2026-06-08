@@ -7,6 +7,8 @@ import com.toilet.common.Result;
 import com.toilet.dto.AssignDTO;
 import com.toilet.dto.ChangeStatusDTO;
 import com.toilet.entity.RepairOrder;
+import com.toilet.entity.User;
+import com.toilet.mapper.UserMapper;
 import com.toilet.service.FacilityService;
 import com.toilet.service.RepairOrderService;
 import com.toilet.vo.RepairOrderVO;
@@ -26,10 +28,13 @@ public class RepairOrderController {
 
     private final RepairOrderService repairOrderService;
     private final FacilityService facilityService;
+    private final UserMapper userMapper;
 
-    public RepairOrderController(RepairOrderService repairOrderService, FacilityService facilityService) {
+    public RepairOrderController(RepairOrderService repairOrderService, FacilityService facilityService,
+                                  UserMapper userMapper) {
         this.repairOrderService = repairOrderService;
         this.facilityService = facilityService;
+        this.userMapper = userMapper;
     }
 
     @GetMapping("/page")
@@ -64,12 +69,17 @@ public class RepairOrderController {
     public Result<Void> report(@Valid @RequestBody RepairOrder order, Authentication authentication) {
         Long userId = (Long) authentication.getDetails();
         order.setReporterId(userId);
+        // 自动填充上报人姓名
+        User currentUser = userMapper.selectById(userId);
+        if (currentUser != null) {
+            order.setReporterName(currentUser.getRealName());
+        }
         order.setOrderNo("RO" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
         order.setStatus("PENDING");
         repairOrderService.save(order);
-        // 同步更新设施状态为故障（乐观锁重试）
+        // 同步更新设施状态（从工单表重新计算）
         if (order.getFacilityId() != null) {
-            facilityService.syncFacilityStatus(order.getFacilityId(), "FAULT");
+            facilityService.recomputeFacilityStatus(order.getFacilityId());
         }
         return Result.success();
     }
@@ -104,11 +114,14 @@ public class RepairOrderController {
     @Transactional
     public Result<Void> delete(@PathVariable Long id) {
         RepairOrder order = repairOrderService.getById(id);
-        if (order != null && order.getFacilityId() != null) {
-            // 恢复设施状态为正常
-            facilityService.syncFacilityStatus(order.getFacilityId(), "NORMAL");
-        }
+        if (order == null) return Result.success();
+        Long facilityId = order.getFacilityId();
+        // 先删除工单（逻辑删除标记 deleted=1）
         repairOrderService.removeById(id);
+        // 再根据剩余工单重建设施状态
+        if (facilityId != null) {
+            facilityService.recomputeFacilityStatus(facilityId);
+        }
         return Result.success();
     }
 }

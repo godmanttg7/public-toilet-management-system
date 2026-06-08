@@ -21,7 +21,7 @@
         <el-table-column prop="reportType" label="汇报类型" width="100" align="center" />
         <el-table-column prop="description" label="情况描述" min-width="200" show-overflow-tooltip />
         <el-table-column label="汇报人" width="100">
-          <template #default="{ row }">{{ row.reporterName || '用户#' + row.reporterId }}</template>
+          <template #default="{ row }">{{ row.reporterName || (row.reporterId ? '用户#' + row.reporterId : '未知') }}</template>
         </el-table-column>
         <el-table-column label="现场照片" width="100" align="center">
           <template #default="{ row }">

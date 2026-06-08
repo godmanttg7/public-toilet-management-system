@@ -23,7 +23,7 @@
           <template #default="{ row }">{{ row.toiletName || '公厕#' + row.toiletId }}</template>
         </el-table-column>
         <el-table-column label="保洁员" min-width="100">
-          <template #default="{ row }">{{ row.cleanerName || '用户#' + row.cleanerId }}</template>
+          <template #default="{ row }">{{ row.cleanerName || (row.cleanerId ? '用户#' + row.cleanerId : '未知') }}</template>
         </el-table-column>
         <el-table-column prop="scheduleDate" label="排班日期" width="120" />
         <el-table-column label="班次" width="90">

@@ -88,7 +88,7 @@
               </template>
             </el-table-column>
             <el-table-column label="操作人" width="100">
-              <template #default="{ row }">{{ row.operatorName || '用户#' + row.operatorId }}</template>
+              <template #default="{ row }">{{ row.operatorName || (row.operatorId ? '用户#' + row.operatorId : '未知') }}</template>
             </el-table-column>
             <el-table-column prop="createTime" label="操作时间" width="170" />
           </el-table>

@@ -19,7 +19,6 @@ public class RepairOrder {
     private Long facilityId;
     @NotBlank(message = "故障描述不能为空")
     private String faultDesc;
-    @NotNull(message = "报告人不能为空")
     private Long reporterId;
     private Long assigneeId;
     private String status;

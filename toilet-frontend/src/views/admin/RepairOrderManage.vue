@@ -33,7 +33,7 @@
           <template #default="{ row }">{{ truncate(row.faultDesc, 35) }}</template>
         </el-table-column>
         <el-table-column label="上报人" width="90">
-          <template #default="{ row }">{{ row.reporterName || '用户#' + row.reporterId }}</template>
+          <template #default="{ row }">{{ row.reporterName || (row.reporterId ? '用户#' + row.reporterId : '未知') }}</template>
         </el-table-column>
         <el-table-column label="维修人" width="90">
           <template #default="{ row }">{{ row.assigneeName || (row.assigneeId ? '用户#' + row.assigneeId : '-') }}</template>
@@ -90,9 +90,6 @@
             <el-option v-for="f in facilityList" :key="f.id"
               :label="f.facilityType + (f.brand ? ' - ' + f.brand : '') + (f.model ? ' (' + f.model + ')' : '')" :value="f.id" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="上报人" prop="reporterName">
-          <el-input v-model="reportForm.reporterName" placeholder="填写上报人姓名，留空默认为当前用户" />
         </el-form-item>
         <el-form-item label="故障描述" prop="faultDesc">
           <el-input v-model="reportForm.faultDesc" type="textarea" :rows="3" placeholder="请描述故障情况" />
@@ -151,7 +148,7 @@ const search = reactive({ status: '', toiletId: null })
 const reportDialogVisible = ref(false)
 const reportSubmitting = ref(false)
 const reportFormRef = ref(null)
-const reportForm = reactive({ toiletId: null, facilityId: null, faultDesc: '', reporterName: '', images: [] })
+const reportForm = reactive({ toiletId: null, facilityId: null, faultDesc: '', images: [] })
 const reportFormRules = {
   toiletId: [{ required: true, message: '请选择公厕', trigger: 'change' }],
   facilityId: [{ required: true, message: '请选择故障设施', trigger: 'change' }],
@@ -213,7 +210,7 @@ async function fetchData() {
 }
 
 function resetReportForm() {
-  Object.assign(reportForm, { toiletId: null, facilityId: null, faultDesc: '', reporterName: '', images: [] })
+  Object.assign(reportForm, { toiletId: null, facilityId: null, faultDesc: '', images: [] })
 }
 function handleReport() { reportDialogVisible.value = true }
 
@@ -237,7 +234,6 @@ async function handleReportSubmit() {
       toiletId: reportForm.toiletId,
       facilityId: reportForm.facilityId,
       faultDesc: reportForm.faultDesc,
-      reporterName: reportForm.reporterName,
       images: imageUrls.join(',')
     })
     ElMessage.success('故障上报成功')

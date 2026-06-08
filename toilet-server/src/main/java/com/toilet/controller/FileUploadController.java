@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,13 +39,21 @@ public class FileUploadController {
             "52494646"  // WEBP (RIFF)
     ));
 
-    @Value("${upload.dir:uploads}")
+    @Value("${upload.dir:}")
     private String uploadDir;
+
+    private Path getUploadRoot() {
+        if (StringUtils.hasText(uploadDir)) {
+            return Paths.get(uploadDir);
+        }
+        // 默认使用系统临时目录，确保可写
+        return Paths.get(System.getProperty("java.io.tmpdir"), "toilet-uploads");
+    }
 
     @PostConstruct
     public void init() {
         try {
-            Files.createDirectories(Paths.get(uploadDir, "images"));
+            Files.createDirectories(getUploadRoot().resolve("images"));
         } catch (IOException e) {
             log.warn("上传目录创建失败", e);
         }
@@ -92,7 +101,7 @@ public class FileUploadController {
         try {
             String fileName = UUID.randomUUID() + ext;
             String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-            Path dirPath = Paths.get(uploadDir, "images", datePath);
+            Path dirPath = getUploadRoot().resolve("images").resolve(datePath);
             Files.createDirectories(dirPath);
             Path filePath = dirPath.resolve(fileName);
             file.transferTo(filePath.toFile());

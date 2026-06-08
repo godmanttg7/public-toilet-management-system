@@ -33,9 +33,6 @@
         </template>
       </div>
       <div class="header-right">
-        <el-badge :value="unreadMsgCount" :max="99" :hidden="unreadMsgCount === 0">
-          <el-icon :size="20" @click="messageDrawerVisible = true" style="cursor: pointer; color: rgba(255,255,255,0.85)"><Bell /></el-icon>
-        </el-badge>
         <el-avatar :size="28" style="background: rgba(255,255,255,0.2); color: #fff; font-size: 13px">
           {{ userInfo?.realName?.charAt(0) || 'U' }}
         </el-avatar>

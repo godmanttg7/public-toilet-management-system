@@ -64,20 +64,24 @@ public class PublicController {
         feedback.setToiletId(body.get("toiletId") != null ? Long.valueOf(body.get("toiletId").toString()) : null);
         feedback.setScore(body.get("score") != null ? Integer.valueOf(body.get("score").toString()) : 5);
 
-        // 将分类和联系方式嵌入内容，确保管理员看到完整信息
-        String category = body.get("category") != null ? body.get("category").toString() : "";
-        String description = body.get("description") != null ? body.get("description").toString() : "";
-        String contact = body.get("contact") != null ? body.get("contact").toString() : "";
-
-        StringBuilder content = new StringBuilder();
-        if (StringUtils.hasText(category)) {
-            content.append("【").append(category).append("】");
+        // 支持两种提交格式：
+        //   评价页(FeedbackForm)：{ content: "用户输入" }
+        //   展示页(Showcase)：   { category, description, contact }
+        String content;
+        if (body.containsKey("content") && body.get("content") != null
+                && StringUtils.hasText(body.get("content").toString())) {
+            content = body.get("content").toString();
+        } else {
+            String category = body.get("category") != null ? body.get("category").toString() : "";
+            String description = body.get("description") != null ? body.get("description").toString() : "";
+            String contact = body.get("contact") != null ? body.get("contact").toString() : "";
+            StringBuilder sb = new StringBuilder();
+            if (StringUtils.hasText(category)) sb.append("【").append(category).append("】");
+            sb.append(description);
+            if (StringUtils.hasText(contact)) sb.append("（联系方式：").append(contact).append("）");
+            content = sb.toString();
         }
-        content.append(description);
-        if (StringUtils.hasText(contact)) {
-            content.append("（联系方式：").append(contact).append("）");
-        }
-        feedback.setContent(content.toString());
+        feedback.setContent(content);
         feedback.setSubmitTime(LocalDateTime.now());
         feedbackService.save(feedback);
         Map<String, Object> result = new HashMap<>();

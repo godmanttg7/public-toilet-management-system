@@ -53,6 +53,7 @@ public class FacilityController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public Result<Void> save(@Valid @RequestBody Facility facility) {
+        facility.setStatus("NORMAL"); // 新设施默认正常，后续由 recompute 管理
         facilityService.save(facility);
         return Result.success();
     }
@@ -60,6 +61,7 @@ public class FacilityController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public Result<Void> update(@Valid @RequestBody Facility facility) {
+        facility.setStatus(null); // status 只能由 recomputeFacilityStatus 计算
         facilityService.updateById(facility);
         return Result.success();
     }
@@ -69,5 +71,15 @@ public class FacilityController {
     public Result<Void> delete(@PathVariable Long id) {
         facilityService.removeById(id);
         return Result.success();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/rebuild-status")
+    public Result<Integer> rebuildStatus() {
+        int fixed = facilityService.rebuildAllStatus();
+        if (fixed > 0) {
+            return Result.success("已修正 " + fixed + " 个设施状态", fixed);
+        }
+        return Result.success("所有设施状态一致，无需修正", 0);
     }
 }

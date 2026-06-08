@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driver-class-name: dm.jdbc.driver.DmDriver
-    url: jdbc:dm://localhost:5236/toilet_db
-    username: toilet_db
-    password: Toilet123456
+    url: jdbc:dm://${DB_HOST:localhost}:5236/${DB_NAME:toilet_db}
+    username: ${DB_USERNAME:toilet_db}
+    password: ${DB_PASSWORD:Toilet123456}
     hikari:
       connection-test-query: SELECT 1
       connection-timeout: 30000

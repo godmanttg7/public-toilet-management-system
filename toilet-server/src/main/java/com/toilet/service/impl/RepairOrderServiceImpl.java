@@ -74,9 +74,9 @@ public class RepairOrderServiceImpl extends ServiceImpl<RepairOrderMapper, Repai
         order.setAssigneeId(assigneeId);
         order.setStatus("REPAIRING");
         repairOrderMapper.updateById(order);
-        // 同步设施状态为维修中（乐观锁重试）
+        // 从工单表重建设施状态
         if (order.getFacilityId() != null) {
-            facilityService.syncFacilityStatus(order.getFacilityId(), "REPAIR");
+            facilityService.recomputeFacilityStatus(order.getFacilityId());
         }
         // 通知被指派的维修人员
         sendMessage(assigneeId, "新工单指派",
@@ -95,9 +95,9 @@ public class RepairOrderServiceImpl extends ServiceImpl<RepairOrderMapper, Repai
         }
         order.setStatus("CANCELLED");
         repairOrderMapper.updateById(order);
-        // 同步设施状态为正常（乐观锁重试）
+        // 从剩余工单重新计算设施状态
         if (order.getFacilityId() != null) {
-            facilityService.syncFacilityStatus(order.getFacilityId(), "NORMAL");
+            facilityService.recomputeFacilityStatus(order.getFacilityId());
         }
         // 通知上报人工单已取消
         if (order.getReporterId() != null) {
@@ -160,34 +160,18 @@ public class RepairOrderServiceImpl extends ServiceImpl<RepairOrderMapper, Repai
         order.setStatus(newStatus);
         if ("FINISHED".equals(newStatus)) {
             order.setFinishTime(LocalDateTime.now());
-            if (order.getFacilityId() != null) {
-                facilityService.syncFacilityStatus(order.getFacilityId(), "NORMAL");
-            }
             // 通知维修人员工单已验收通过
             if (order.getAssigneeId() != null) {
                 sendMessage(order.getAssigneeId(), "工单验收通过",
                         "您维修的工单【" + order.getOrderNo() + "】已验收通过。");
             }
         } else if ("REPAIRING".equals(newStatus) && "CHECKING".equals(currentStatus)) {
-            // 验收退回：设施恢复故障状态
-            if (order.getFacilityId() != null) {
-                facilityService.syncFacilityStatus(order.getFacilityId(), "FAULT");
-            }
             // 通知维修人员工单被退回
             if (order.getAssigneeId() != null) {
                 sendMessage(order.getAssigneeId(), "工单验收退回",
                         "您维修的工单【" + order.getOrderNo() + "】验收未通过，请重新处理。");
             }
-        } else if ("REPAIRING".equals(newStatus) && "PENDING".equals(currentStatus)) {
-            // 直接从待处理开始维修：设施进入维修中
-            if (order.getFacilityId() != null) {
-                facilityService.syncFacilityStatus(order.getFacilityId(), "REPAIR");
-            }
         } else if ("CANCELLED".equals(newStatus) && "PENDING".equals(currentStatus)) {
-            // 直接从待处理取消：设施恢复正常
-            if (order.getFacilityId() != null) {
-                facilityService.syncFacilityStatus(order.getFacilityId(), "NORMAL");
-            }
             // 通知上报人工单已取消
             if (order.getReporterId() != null) {
                 sendMessage(order.getReporterId(), "工单已取消",
@@ -204,6 +188,10 @@ public class RepairOrderServiceImpl extends ServiceImpl<RepairOrderMapper, Repai
             }
         }
         repairOrderMapper.updateById(order);
+        // 统一在工单落库后重建设施状态（确保读到最新已落库的工单状态）
+        if (order.getFacilityId() != null) {
+            facilityService.recomputeFacilityStatus(order.getFacilityId());
+        }
     }
 
     @Override

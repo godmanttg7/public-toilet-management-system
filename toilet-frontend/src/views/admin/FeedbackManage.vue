@@ -14,7 +14,7 @@
 
       <el-table :data="tableData" border stripe v-loading="loading" empty-text="暂无反馈数据">
         <el-table-column label="反馈人" width="100">
-          <template #default="{ row }">{{ row.userName || '用户#' + row.userId }}</template>
+          <template #default="{ row }">{{ row.userName || (row.userId ? '用户#' + row.userId : '未知') }}</template>
         </el-table-column>
         <el-table-column label="所属公厕" min-width="140" show-overflow-tooltip>
           <template #default="{ row }">{{ row.toiletName || '公厕#' + row.toiletId }}</template>

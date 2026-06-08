@@ -80,11 +80,6 @@
           <el-link href="/" :underline="false" style="margin-right: 8px">
             <el-icon><HomeFilled /></el-icon> 返回前台
           </el-link>
-          <el-badge :value="unreadMsgCount" :max="99" class="header-badge" :hidden="unreadMsgCount === 0">
-            <el-icon :size="20" @click="messageDrawerVisible = true" style="cursor: pointer"><Bell /></el-icon>
-          </el-badge>
-          <MessageDrawer v-model="messageDrawerVisible" :unreadCount="unreadMsgCount"
-            @update:unreadCount="unreadMsgCount = $event" />
           <el-dropdown trigger="click">
             <div class="user-info">
               <el-avatar :size="32" style="background: #1890FF">{{ userInfo?.realName?.charAt(0) || 'U' }}</el-avatar>
@@ -110,25 +105,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { getUnreadMessageCount } from '../api'
-import MessageDrawer from '../components/MessageDrawer.vue'
 
 const router = useRouter()
 const route = useRoute()
 const isCollapse = ref(false)
-const unreadMsgCount = ref(0)
-const messageDrawerVisible = ref(false)
-
-async function fetchUnreadCount() {
-  try {
-    const res = await getUnreadMessageCount()
-    unreadMsgCount.value = res.data || 0
-  } catch { unreadMsgCount.value = 0 }
-}
-onMounted(fetchUnreadCount)
 
 const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null')
 const activeMenu = computed(() => route.path)

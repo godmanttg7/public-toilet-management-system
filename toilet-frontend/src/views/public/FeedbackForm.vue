@@ -1,5 +1,13 @@
 <template>
   <div class="feedback-container">
+    <!-- 顶部返回栏 -->
+    <div class="feedback-topbar">
+      <el-button text @click="$router.push('/public')" style="color: #fff; font-size: 15px">
+        <el-icon><ArrowLeft /></el-icon>
+        <span>返回公厕列表</span>
+      </el-button>
+    </div>
+
     <el-card class="feedback-card">
       <template #header>
         <div style="text-align: center; font-size: 18px; font-weight: bold">
@@ -144,4 +152,13 @@ onMounted(async () => {
 .feedback-card {
   width: 500px;
 }
+.feedback-topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 12px 20px;
+  background: rgba(102, 126, 234, 0.9);
+  backdrop-filter: blur(10px);
+}
+
 </style>
