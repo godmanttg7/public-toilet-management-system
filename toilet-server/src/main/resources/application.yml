@@ -38,5 +38,8 @@ jwt:
   secret: ${JWT_SECRET:ihRjWFVIUYEDR/oe+n0UJruWV8OybViuMeJ8VSp+W7U=}
   expiration: 86400000
 
+upload:
+  dir: ${java.io.tmpdir}/toilet-uploads
+
 app:
   public-apis: /api/auth/login,/api/public/**
